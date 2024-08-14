@@ -1,0 +1,11 @@
+{
+  "name": "axbacktrace",
+  "description": "dump backtrace for any arch",
+  "authors": [{
+    "name": "guoweikang",
+    "email": "guoweikang.kernel@gmail"
+  }],
+  "keywords": ["backtrace", "aarch64","x86_64","riscv64"],
+  "repo": "kern-crates/axbacktrace",
+  "doc_url": "https://github.com/kern-crates/axbacktrace/blob/main/README.md"
+}
