@@ -8,7 +8,7 @@ cfg_if::cfg_if! {
         mod aarch64;
         pub use self::aarch64::*;
         pub struct Test;
-    } else if #[cfg(target_arch = "riscv64")] {
+    } else if #[cfg(any(target_arch = "riscv32", target_arch = "riscv64"))] {
         mod riscv;
         pub use self::riscv::*;
     } else if #[cfg(target_arch = "x86_64")] {
@@ -38,6 +38,7 @@ pub trait UnwindIf {
     fn unwind(&mut self);
 }
 
+#[no_mangle]
 pub fn dump_backtrace(unwind: &mut Unwind) {
     error!("Call trace: ");
     unwind.unwind();

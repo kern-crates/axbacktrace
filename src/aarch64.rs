@@ -2,6 +2,7 @@ use core::arch::asm;
 use crate::{StackInfo, UnwindIf};
 
 pub struct Unwind {
+    init_curr: bool, 
     pc: usize,
     fp: usize,
     stack_info: StackInfo,
@@ -37,7 +38,7 @@ impl Unwind {
 
 
 #[inline(always)]
-pub(crate) fn current_unwind() -> (usize, usize) {
+fn current_unwind() -> (usize, usize) {
     unsafe {
         let mut pc: usize;
         asm!("ldr {ptr}, [x29, #8]", ptr = out(reg) pc);
@@ -48,17 +49,22 @@ pub(crate) fn current_unwind() -> (usize, usize) {
 }
 
 impl UnwindIf for Unwind {
-    #[inline(always)]
     fn new_from_cur_ctx(stack_info: StackInfo) -> Self {
-        let (pc, fp) = current_unwind();
-        Self::new(pc, fp, stack_info)
+        Unwind{init_curr: true, pc: 0, fp: 0, stack_info}
     }
 
     fn new(pc:usize, fp:usize, stack_info: StackInfo) -> Self {
-        Unwind{pc,fp,stack_info}
+        Unwind{init_curr: false, pc,fp,stack_info}
     }
 
+    #[inline(always)]
     fn unwind(&mut self) {
+        if self.init_curr {
+            let (pc, fp) = current_unwind();
+            self.pc = pc;
+            self.fp = fp;
+        }
+
         if self.is_fp_invalid() {
             error!("unwind init fp: {:#016x} is invalid",self.fp);
             return;
