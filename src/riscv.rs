@@ -50,7 +50,6 @@ impl Unwind {
     }
 }
 
-
 #[inline(always)]
 fn current_unwind() -> (usize, usize) {
     unsafe {
@@ -62,8 +61,7 @@ fn current_unwind() -> (usize, usize) {
 }
 
 impl UnwindIf for Unwind {
-    fn new(pc:usize, fp: usize, stack_info: StackInfo, 
-        text:KtextAddress) 
+    fn new(pc:usize, fp: usize, stack_info: StackInfo)
         -> Self {
         Unwind{init_curr: false, pc, fp, stack_info}
     }
